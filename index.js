@@ -34,7 +34,6 @@ async function connect() {
       if (data.sender && data.text) {
         console.log(data.sender + ": " + data.text);
         gel("chatLog").innerText = gel("chatLog").innerText +"\n"+ (data.sender + ": "+ data.text);
-        gel("message").value = "";
 
         gel("chatLog").scrollTop = gel("chatLog").scrollHeight;
       }
@@ -49,6 +48,7 @@ async function connect() {
       text: message
     });
 
+    gel("message").value = "";
     message = "";
   }
 
