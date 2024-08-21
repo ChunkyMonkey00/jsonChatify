@@ -33,21 +33,29 @@ async function connect() {
     channel.listen("new_message", function (data, meta) {
       if (data.sender && data.text) {
         console.log(data.sender + ": " + data.text);
+        gel("chatLog").innerText = gel("chatLog").innerText +"\n"+ (data.sender + ": "+ data.text);
+        gel("message").value = "";
+
+        gel("chatLog").scrollTop = gel("chatLog").scrollHeight;
       }
     });
   });
 
   function sendMessage() {
+    if(message == "") return;
+
     channel.publish("new_message", {
       sender: username,
       text: message
     });
+
+    message = "";
   }
 
   gel("sendMessage").onclick = sendMessage;
   document.addEventListener('keyup', () => {
-      username = gel("username").value;
-      message = gel("message").value;
+    username = gel("username").value;
+    message = gel("message").value;
   });
 }
 
