@@ -41,6 +41,7 @@ async function connect() {
   });
 
   function sendMessage() {
+    gel("message").value = "";
     if(message == "") return;
 
     channel.publish("new_message", {
@@ -48,7 +49,6 @@ async function connect() {
       text: message
     });
 
-    gel("message").value = "";
     message = "";
   }
 
