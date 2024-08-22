@@ -8,6 +8,8 @@ async function connect() {
   var username;
   var message;
 
+  username = localStorage.getItem("username") || "";
+
   var piesocket = new PieSocket.default({
     clusterId: "free.blr2",
     apiKey: "Adfa5neh1Itih3stVA46TeRkqjj4XHFfbV8dZhEg",
@@ -30,12 +32,26 @@ async function connect() {
   channel.listen("system:member_joined", function (data) {
     console.log(data.member.user + " joined.");
 
+    if(username==""||!username) sendNewMessage("new user joined");
+
     channel.listen("new_message", function (data, meta) {
       if (data.sender && data.text) {
-        console.log(data.sender + ": " + data.text);
-        gel("chatLog").innerText = gel("chatLog").innerText +"\n"+ (data.sender + ": "+ data.text);
 
-        gel("chatLog").scrollTop = gel("chatLog").scrollHeight;
+        if(data.text == "new user joined") {
+          console.log(data.sender + ": " + data.text);
+          
+          if(data.sender == "" || data.sender == " ") data.sender = "New User";
+          
+          gel("chatLog").innerText = gel("chatLog").innerText +"\n"+ (data.sender + "joined");
+
+          gel("chatLog").scrollTop = gel("chatLog").scrollHeight;
+        } else {
+          console.log(data.sender + ": " + data.text);
+          gel("chatLog").innerText = gel("chatLog").innerText +"\n"+ (data.sender + ": "+ data.text);
+
+          gel("chatLog").scrollTop = gel("chatLog").scrollHeight;
+          
+        }
       }
     });
   });
@@ -49,7 +65,14 @@ async function connect() {
       text: message
     });
 
-    message = "";
+    function sendNewMessage(str) {
+      
+    channel.publish("new_message", {
+      sender: username,
+      text: str
+    });
+
+    localStorage.setItem("username", username);
   }
 
   gel("sendMessage").onclick = sendMessage;
