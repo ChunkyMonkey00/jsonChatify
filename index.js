@@ -47,6 +47,7 @@ async function connect() {
     });
 
     gel("message").value = ""; // Clear the input because who leaves messages hanging?
+    localStorage.setItem("username", username); // Let’s store the username so we never have to ask again.
   }
 
   function sendNewMessage(message) {
@@ -55,7 +56,6 @@ async function connect() {
       text: message,
       isJoinMessage: true, // Yeah, it’s a join message. We’re really doing this.
     });
-    localStorage.setItem("username", username); // Let’s store the username so we never have to ask again.
   }
 
   // Send message on button click
