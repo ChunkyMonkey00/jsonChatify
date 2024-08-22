@@ -28,6 +28,13 @@ body {
     transition: background-color 0.3s ease;
 }
 
+.connect {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .button:hover {
     background-color: #3700b3;
 }
@@ -70,6 +77,8 @@ label {
     border-radius: 15px;
     color: #e0e0e0;
     padding: 10px;
+    min-height:400px;
+    min-width:400px;
     max-height: 400px;
     max-width: 400px;
     overflow-y: auto;
