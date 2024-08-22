@@ -1,31 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Chatify</title>
+	<link rel="stylesheet" href="styles.css">
 </head>
 
-<body style="background-color:black;color:white;">
-	<script src="https://unpkg.com/piesocket-js@5"></script>
+<body>
+	<div class="container">
+		<button id="connect" class="button">Connect</button>
 
-	<button id="connect">Connect</button>
+		<div id="loadingScreen" style="visibility:hidden;" class="screen">
+			<h1>Connecting...</h1>
+		</div>
 
-	<div id="loadingScreen" style="visibility:hidden;">
-		<h1 style="color:green;">Connecting...</h1>
-	</div>
-
-	<div id='messageScreen' style="visibility:hidden;">
-		<p>Username</p>
-		<input id="username"></input>
-		<br>
-		<p>Message</p>
-		<input id="message"></input>
-		<br>
-		<br>
-		<button id="sendMessage">Send</button>
-    <br>
-    <p id="chatLog" style="overflow-y:scroll;max-height:400px;max-width:400px;color:white;font-weight:bold;"></p>
-	</div>
-	<script src="index.js"></script>
+		<div id="messageScreen" style="visibility:hidden;" class="screen">
+			<div class="input-group">
+				<label for="username">Username</label>
+				<input id="username" class="input-field" type="text">
+            </div>
+				<div class="input-group">
+					<label for="message">Message</label>
+					<input id="message" class="input-field" type="text">
+            </div>
+					<button id="sendMessage" class="button">Send</button>
+          <br>
+					<div id="chatLog" class="chat-log"></div>
+				</div>
+			</div>
+			<script src="https://unpkg.com/piesocket-js@5"></script>
+			<script src="index.js"></script>
 </body>
-<html>
+
+</html>
