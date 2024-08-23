@@ -1,4 +1,4 @@
-var version = "1.0.5";
+var version = "1.0.6";
 //code
 function gel(id) {
   return document.getElementById(id);
@@ -28,6 +28,53 @@ function detectBotBehavior() {
     }
   }
   behaviorPattern.lastMessageTime = now;
+  return false;
+}
+
+const messageTracker = {
+  recentMessages: [], // Store the last few messages
+  maxRecentMessages: 5, // How many recent messages to track
+  similarityThreshold: 0.8 // How similar is "too similar"? (1 = identical)
+};
+
+// Function to calculate Levenshtein distance (basic string similarity algorithm)
+function calculateSimilarity(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (a[i - 1] === b[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1];
+      } else {
+        dp[i][j] = Math.min(dp[i - 1][j - 1], dp[i][j - 1], dp[i - 1][j]) + 1;
+      }
+    }
+  }
+
+  const distance = dp[m][n];
+  const longestLength = Math.max(m, n);
+  return 1 - distance / longestLength; // Return a similarity score between 0 and 1
+}
+
+function detectSimilarMessages(newMessage) {
+  for (let oldMessage of messageTracker.recentMessages) {
+    let similarity = calculateSimilarity(newMessage, oldMessage);
+    if (similarity >= messageTracker.similarityThreshold) {
+      console.warn("Message too similar to recent ones. Possible bot detected."); // Let’s throw some suspicion here.
+      return true;
+    }
+  }
+
+  // Update the recent messages list
+  messageTracker.recentMessages.push(newMessage);
+  if (messageTracker.recentMessages.length > messageTracker.maxRecentMessages) {
+    messageTracker.recentMessages.shift(); // Remove the oldest message to maintain the cap
+  }
+
   return false;
 }
 
@@ -99,6 +146,11 @@ async function connect() {
 
     messageLimits.messageTimestamps.push(now); // Log this message’s timestamp
 
+    if (detectSimilarMessages(message)) {
+    console.warn("Message blocked due to suspicious similarity."); // Block message if it's too similar
+    return;
+    }
+    
     channel.publish("new_message", {
       sender: username,
       text: message,
