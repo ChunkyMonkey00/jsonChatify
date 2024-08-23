@@ -1,4 +1,4 @@
-var version = "1.0.4";
+var version = "1.0.5";
 //code
 function gel(id) {
   return document.getElementById(id);
@@ -16,7 +16,7 @@ function detectBotBehavior() {
     let timeDifference = now - behaviorPattern.lastMessageTime;
 
     // Check for very fast repetitive messages
-    if (timeDifference < 300) { // Less than 300ms gap is pretty suspicious
+    if (timeDifference < 600) { // Less than 300ms gap is pretty suspicious
       behaviorPattern.suspiciousCount++;
       if (behaviorPattern.suspiciousCount > behaviorPattern.allowedSuspicious) {
         console.warn("Suspicious behavior detected. Possible bot."); // Handle bot behavior here
@@ -74,7 +74,7 @@ async function connect() {
   });
 
   const messageLimits = {
-    maxMessages: 5, // Limit per timeframe
+    maxMessages: 3, // Limit per timeframe
     timeframe: 10 * 1000, // 10 seconds in milliseconds
     messageTimestamps: []
   };
