@@ -1,7 +1,34 @@
-var version = "1.0.3";
-
+var version = "1.0.4";
+//code
 function gel(id) {
   return document.getElementById(id);
+}
+
+const behaviorPattern = {
+  lastMessageTime: null,
+  suspiciousCount: 0,
+  allowedSuspicious: 3 // How many weird behaviors before we assume it’s a bot
+};
+
+function detectBotBehavior() {
+  const now = Date.now();
+  if (behaviorPattern.lastMessageTime) {
+    let timeDifference = now - behaviorPattern.lastMessageTime;
+
+    // Check for very fast repetitive messages
+    if (timeDifference < 300) { // Less than 300ms gap is pretty suspicious
+      behaviorPattern.suspiciousCount++;
+      if (behaviorPattern.suspiciousCount > behaviorPattern.allowedSuspicious) {
+        console.warn("Suspicious behavior detected. Possible bot."); // Handle bot behavior here
+        return true; // Return true if it’s likely a bot
+      }
+    } else {
+      // If the time gap is reasonable, reset suspicion counter
+      behaviorPattern.suspiciousCount = 0;
+    }
+  }
+  behaviorPattern.lastMessageTime = now;
+  return false;
 }
 
 async function connect() {
@@ -46,9 +73,31 @@ async function connect() {
     }
   });
 
+  const messageLimits = {
+    maxMessages: 5, // Limit per timeframe
+    timeframe: 10 * 1000, // 10 seconds in milliseconds
+    messageTimestamps: []
+  };
+
   function sendMessage() {
+    if (detectBotBehavior()) {
+      return; // Don't send if bot behavior is detected
+    }
+
     let message = gel("message").value.trim(); // Strip those empty spaces because people can't type properly.
     if (message === "" || message.length > 300) return; // Why even try to send an empty message? Just don’t.
+
+    const now = Date.now();
+
+    // Clean up old timestamps outside the timeframe
+    messageLimits.messageTimestamps = messageLimits.messageTimestamps.filter(ts => now - ts < messageLimits.timeframe);
+
+    if (messageLimits.messageTimestamps.length >= messageLimits.maxMessages) {
+      console.warn("You're sending messages too fast. Slow down."); // Passive-aggressive rate limit warning
+      return; // Prevent sending if limit is hit
+    }
+
+    messageLimits.messageTimestamps.push(now); // Log this message’s timestamp
 
     channel.publish("new_message", {
       sender: username,
