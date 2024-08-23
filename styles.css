@@ -11,6 +11,14 @@ body {
     height: 100vh;
 }
 
+#version {
+  position: absolute;
+  top:0px;
+  left:10px;
+  color: green;
+  font-size:15px;
+}
+
 .container {
     display: flex;
     flex-direction: column;
