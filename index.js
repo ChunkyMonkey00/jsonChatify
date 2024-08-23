@@ -4,7 +4,7 @@ function gel(id) {
 
 async function connect() {
   showLoadingScreen(); // Great, another loading screen. Let's waste some more of our life waiting.
-
+  gel("username").value = localStorage.getItem("username") || "New User";
   let username = gel("username").value || "New User"; // Seriously, if they can't even come up with a name, I guess they're just "New User."
 
   var piesocket = new PieSocket.default({
@@ -18,7 +18,7 @@ async function connect() {
 
   let channel = await piesocket.subscribe("chat-room"); // Finally subscribed, like it’s a YouTube channel.
   console.log("Connected."); // Great, now the chaos begins.
-
+  
   // Send a "new user joined" message when the user connects
   sendNewMessage(`${username} joined`); // Woohoo, they’ve arrived. Let’s throw a party.
 
@@ -39,7 +39,7 @@ async function connect() {
 
   function sendMessage() {
     let message = gel("message").value.trim(); // Strip those empty spaces because people can't type properly.
-    if (message === "") return; // Why even try to send an empty message? Just don’t.
+    if (message === "" || message.length > 300) return; // Why even try to send an empty message? Just don’t.
 
     channel.publish("new_message", {
       sender: username,
