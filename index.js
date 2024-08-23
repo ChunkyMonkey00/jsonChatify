@@ -1,5 +1,5 @@
 var version = "1.0.3";
-//code
+
 function gel(id) {
   return document.getElementById(id);
 }
