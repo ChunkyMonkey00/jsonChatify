@@ -1,4 +1,4 @@
-var version = "1.0.6";
+var version = "1.0.7";
 //code
 function gel(id) {
   return document.getElementById(id);
@@ -147,10 +147,10 @@ async function connect() {
     messageLimits.messageTimestamps.push(now); // Log this message’s timestamp
 
     if (detectSimilarMessages(message)) {
-    console.warn("Message blocked due to suspicious similarity."); // Block message if it's too similar
-    return;
+      console.warn("Message blocked due to suspicious similarity."); // Block message if it's too similar
+      return;
     }
-    
+
     channel.publish("new_message", {
       sender: username,
       text: message,
@@ -171,10 +171,10 @@ async function connect() {
   // Send message on button click
   gel("sendMessage").onclick = sendMessage; // Let’s bind the send button like we have a choice.
 
-  // Update username and message on keyup
-  document.addEventListener('keyup', () => {
+  // Update username and message timed, so that those pesky script users cant bypass it.
+  setInterval(() => {
     username = gel("username").value.trim() || "New User"; // Update the username on every keystroke because apparently, that’s what life has come to.
-  });
+  }, 100);
 }
 
 function showLoadingScreen() {
@@ -192,25 +192,25 @@ gel("connect").onclick = connect; // Let’s see if anyone is brave enough to cl
 
 function getVersion() {
 
-let versionElement = gel("version");
-versionElement.innerHTML = "Version: "+version;
+  let versionElement = gel("version");
+  versionElement.innerHTML = "Version: " + version;
 
-fetch('https://raw.githubusercontent.com/ChunkyMonkey00/jsonChatify/main/versionHistory.txt')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`Oh great, a fetch error: ${response.statusText}`);
-    }
-    return response.text();
-  })
-  .then(text => {
-    text = text.trim();
-    console.log("Server version: "+text);
-    if(text != version) {
-      gel("version").style.color = "red";
-      versionElement.innerHTML += " (outdated)";
-    }
-  })
-  .catch(error => console.error('Fetch failed, because of course it did:', error));
+  fetch('https://raw.githubusercontent.com/ChunkyMonkey00/jsonChatify/main/versionHistory.txt')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Oh great, a fetch error: ${response.statusText}`);
+      }
+      return response.text();
+    })
+    .then(text => {
+      text = text.trim();
+      console.log("Server version: " + text);
+      if (text != version) {
+        gel("version").style.color = "red";
+        versionElement.innerHTML += " (outdated)";
+      }
+    })
+    .catch(error => console.error('Fetch failed, because of course it did:', error));
 }
 
 getVersion();
