@@ -37,7 +37,7 @@ async function connect() {
     }
   });
 
-  channel.liste("member_left", function (data) {
+  channel.listen("member_left", function (data) {
     let who = data.member.user;
     if(who) {
       gel("chatLog").innerText += `${who} left\n`; // Back to living their own life. How pathetic.
