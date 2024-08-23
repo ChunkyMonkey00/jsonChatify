@@ -37,6 +37,13 @@ async function connect() {
     }
   });
 
+  channel.liste("member_left", function (data) {
+    let who = data.member.user;
+    if(who) {
+      gel("chatLog").innerText += `${who} left\n`; // Back to living their own life. How pathetic.
+    }
+  });
+
   function sendMessage() {
     let message = gel("message").value.trim(); // Strip those empty spaces because people can't type properly.
     if (message === "" || message.length > 300) return; // Why even try to send an empty message? Just don’t.
