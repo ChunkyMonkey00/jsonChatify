@@ -1,4 +1,4 @@
-var version = "1.0.2";
+var version = "1.0.3";
 //code
 function gel(id) {
   return document.getElementById(id);
@@ -20,7 +20,7 @@ async function connect() {
 
   let channel = await piesocket.subscribe("chat-room"); // Finally subscribed, like it’s a YouTube channel.
   console.log("Connected."); // Great, now the chaos begins.
-  
+
   // Send a "new user joined" message when the user connects
   sendNewMessage(`${username} joined`); // Woohoo, they’ve arrived. Let’s throw a party.
 
@@ -41,7 +41,7 @@ async function connect() {
 
   channel.listen("member_left", function (data) {
     let who = data.member.user;
-    if(who) {
+    if (who) {
       gel("chatLog").innerText += `${who} left\n`; // Back to living their own life. How pathetic.
     }
   });
@@ -88,3 +88,28 @@ function showMessageScreen() {
 
 // Connect on button click
 gel("connect").onclick = connect; // Let’s see if anyone is brave enough to click this.
+
+function getVersion() {
+
+let versionElement = gel("version");
+versionElement.innerHTML = "Version: "+version;
+
+fetch('https://raw.githubusercontent.com/ChunkyMonkey00/jsonChatify/main/versionHistory.txt')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Oh great, a fetch error: ${response.statusText}`);
+    }
+    return response.text();
+  })
+  .then(text => {
+    text = text.trim();
+    console.log("Server version: "+text);
+    if(text != version) {
+      gel("version").style.color = "red";
+      versionElement.innerHTML += " (outdated)";
+    }
+  })
+  .catch(error => console.error('Fetch failed, because of course it did:', error));
+}
+
+getVersion();
